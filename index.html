@@ -32,6 +32,8 @@
     const fallback = "https://raw.githubusercontent.com/gtpark0904/gtpark0904.github.io/main/default.png";
     const current = "https://github.com/gtpark0904/gtpark0904.github.io/releases/download/current_image/current.png?raw=true";
 
+    let intervalId = null;
+
     function updateImage() {
       const newImg = new Image();
       newImg.src = current + "&t=" + new Date().getTime(); // cache-busting
@@ -43,11 +45,18 @@
         setTimeout(() => {
           card.src = newImg.src;
           card.style.opacity = 1; // fade in new image
-        }, 800); // match transition duration
+        }, 800);
+
+        // ✅ stop refreshing once current.png exists
+        if (intervalId) {
+          clearInterval(intervalId);
+          intervalId = null;
+          console.log("Current.png found. Refresh stopped.");
+        }
       };
 
       newImg.onerror = () => {
-        // if image missing, fallback
+        // if missing, fallback
         if (card.src !== fallback) {
           card.style.opacity = 0;
           setTimeout(() => {
@@ -58,8 +67,8 @@
       };
     }
 
-    // refresh every 10 seconds
-    setInterval(updateImage, 10000);
+    // start refreshing every 10s until found
+    intervalId = setInterval(updateImage, 10000);
     updateImage();
   </script>
 </body>
