@@ -11,7 +11,7 @@
       justify-content: center;
       align-items: center;
       background: url("https://raw.githubusercontent.com/gtpark0904/gtpark0904.github.io/main/default.png") center center / contain no-repeat;
-      background-color: #111; /* fallback color if image fails */
+      background-color: #111; /* fallback color */
     }
     .image-container {
       position: relative;
@@ -36,41 +36,8 @@
 </head>
 <body>
   <div class="image-container">
-    <!-- Only one layer needed now -->
-    <img id="currentImg" src="" alt="Current Image">
+    <img id="img1" class="" src="" alt="Current Image 1">
+    <img id="img2" class="" src="" alt="Current Image 2">
   </div>
 
   <script>
-    const releaseUrl = "https://github.com/gtpark0904/gtpark0904.github.io/releases/download/current_image/current.png?raw=true";
-    const defaultBg = "https://raw.githubusercontent.com/gtpark0904/gtpark0904.github.io/main/default.png";
-
-    const currentImg = document.getElementById("currentImg");
-    let intervalId = null;
-
-    function updateImage() {
-      const newImg = new Image();
-      newImg.src = releaseUrl + "&t=" + new Date().getTime(); // cache-busting
-
-      newImg.onload = () => {
-        currentImg.src = newImg.src;
-        currentImg.classList.add("visible");
-
-        if (intervalId) {
-          clearInterval(intervalId);
-          intervalId = null;
-          console.log("current.png found. Refresh stopped.");
-        }
-      };
-
-      newImg.onerror = () => {
-        // keep currentImg hidden, background already shows default.png
-        currentImg.classList.remove("visible");
-      };
-    }
-
-    // refresh every 10s until current.png exists
-    intervalId = setInterval(updateImage, 10000);
-    updateImage();
-  </script>
-</body>
-</html>
