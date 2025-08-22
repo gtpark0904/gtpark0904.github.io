@@ -4,70 +4,74 @@
   <meta charset="UTF-8">
   <title>My Image</title>
   <style>
-    body {
+    html, body {
+      height: 100%;
+      margin: 0;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      margin: 0;
-      background: #111;
+      background-color: #111; /* fallback color */
     }
-    img {
+
+    .image-container {
+      position: relative;
       max-width: 90%;
       max-height: 90%;
+      background: url("https://raw.githubusercontent.com/gtpark0904/gtpark0904.github.io/main/default.png") center center / contain no-repeat;
+      border-radius: 12px;
+    }
+
+    .current-img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: auto;
+      opacity: 0;
+      transition: opacity 1.5s ease-in-out;
       border-radius: 12px;
       box-shadow: 0 0 20px rgba(255,255,255,0.5);
+    }
+
+    .current-img.visible {
       opacity: 1;
-      transition: opacity 0.8s ease-in-out; /* smooth fade */
     }
   </style>
 </head>
 <body>
-  <img id="card" 
-       src="https://raw.githubusercontent.com/gtpark0904/gtpark0904.github.io/main/default.png"
-       alt="My Image">
+  <div class="image-container">
+    <img id="currentImg" class="current-img" src="" alt="Current Image">
+  </div>
 
   <script>
-    const card = document.getElementById("card");
-    const fallback = "https://raw.githubusercontent.com/gtpark0904/gtpark0904.github.io/main/default.png";
-    const current = "https://github.com/gtpark0904/gtpark0904.github.io/releases/download/current_image/current.png?raw=true";
+    const currentUrl = "https://github.com/gtpark0904/gtpark0904.github.io/releases/download/current_image/current.png?raw=true";
+    const currentImg = document.getElementById("currentImg");
 
     let intervalId = null;
 
     function updateImage() {
       const newImg = new Image();
-      newImg.src = current + "&t=" + new Date().getTime(); // cache-busting
+      newImg.src = currentUrl + "&t=" + new Date().getTime(); // cache-busting
 
       newImg.onload = () => {
-        // fade out old image
-        card.style.opacity = 0;
+        currentImg.src = newImg.src;
+        currentImg.classList.add("visible");
 
-        setTimeout(() => {
-          card.src = newImg.src;
-          card.style.opacity = 1; // fade in new image
-        }, 800);
-
-        // ✅ stop refreshing once current.png exists
+        // stop interval once found
         if (intervalId) {
           clearInterval(intervalId);
           intervalId = null;
-          console.log("Current.png found. Refresh stopped.");
+          console.log("current.png loaded. Refresh stopped.");
         }
       };
 
       newImg.onerror = () => {
-        // if missing, fallback
-        if (card.src !== fallback) {
-          card.style.opacity = 0;
-          setTimeout(() => {
-            card.src = fallback;
-            card.style.opacity = 1;
-          }, 800);
-        }
+        // image missing → do nothing; background default.png remains
+        currentImg.classList.remove("visible");
       };
     }
 
-    // start refreshing every 10s until found
+    // refresh every 10s until current.png exists
     intervalId = setInterval(updateImage, 10000);
     updateImage();
   </script>
