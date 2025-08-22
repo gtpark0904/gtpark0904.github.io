@@ -17,49 +17,50 @@
       max-height: 90%;
       border-radius: 12px;
       box-shadow: 0 0 20px rgba(255,255,255,0.5);
-      transition: opacity 0.3s ease-in-out;
+      opacity: 1;
+      transition: opacity 0.8s ease-in-out; /* smooth fade */
     }
   </style>
 </head>
 <body>
-  <!-- Start with default -->
-  <img id="card"
+  <img id="card" 
        src="https://raw.githubusercontent.com/gtpark0904/gtpark0904.github.io/main/default.png"
        alt="My Image">
 
   <script>
-    const releaseUrl = "https://github.com/gtpark0904/gtpark0904.github.io/releases/download/current_image/current.png";
-    const defaultUrl = "https://raw.githubusercontent.com/gtpark0904/gtpark0904.github.io/main/default.png";
+    const card = document.getElementById("card");
+    const fallback = "https://raw.githubusercontent.com/gtpark0904/gtpark0904.github.io/main/default.png";
+    const current = "https://github.com/gtpark0904/gtpark0904.github.io/releases/download/current_image/current.png?raw=true";
 
-    function refreshImage() {
-      const card = document.getElementById("card");
-      const testImage = new Image();
-      const newUrl = releaseUrl + "?t=" + new Date().getTime();
+    function updateImage() {
+      const newImg = new Image();
+      newImg.src = current + "&t=" + new Date().getTime(); // cache-busting
 
-      testImage.onload = () => {
+      newImg.onload = () => {
+        // fade out old image
         card.style.opacity = 0;
+
         setTimeout(() => {
-          card.src = newUrl;
-          card.style.opacity = 1;
-        }, 200);
+          card.src = newImg.src;
+          card.style.opacity = 1; // fade in new image
+        }, 800); // match transition duration
       };
 
-      testImage.onerror = () => {
-        if (card.src !== defaultUrl) {
+      newImg.onerror = () => {
+        // if image missing, fallback
+        if (card.src !== fallback) {
           card.style.opacity = 0;
           setTimeout(() => {
-            card.src = defaultUrl;
+            card.src = fallback;
             card.style.opacity = 1;
-          }, 200);
+          }, 800);
         }
       };
-
-      testImage.src = newUrl;
     }
 
-    // Refresh every 10 seconds
-    setInterval(refreshImage, 10000);
-    refreshImage();
+    // refresh every 10 seconds
+    setInterval(updateImage, 10000);
+    updateImage();
   </script>
 </body>
 </html>
