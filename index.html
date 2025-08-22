@@ -22,13 +22,13 @@
 </head>
 <body>
   <!-- Added id="card" -->
-  <img id="card" src="https://github.com/gtpark0904/gtpark0904.github.io/releases/download/current_image/current.png?raw=true" alt="My Image">
+  <img id="card" src="https://github.com/gtpark0904/gtpark0904.github.io/releases/download/current_image/current.png" alt="My Image">
 
   <script>
     // Refresh image every 10 seconds
     setInterval(() => {
       const card = document.getElementById("card");
-      card.src = "https://github.com/gtpark0904/gtpark0904.github.io/releases/download/current_image/current.png?raw=true&time=" + new Date().getTime();
+      card.src = "https://github.com/gtpark0904/gtpark0904.github.io/releases/download/current_image/current.png?time=" + new Date().getTime();
     }, 10000);
   </script>
 </body>
