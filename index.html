@@ -4,14 +4,13 @@
   <meta charset="UTF-8">
   <title>My Image</title>
   <style>
-    html, body {
-      height: 100%;
-      margin: 0;
+    body {
       display: flex;
       justify-content: center;
       align-items: center;
-      background: url("https://raw.githubusercontent.com/gtpark0904/gtpark0904.github.io/main/default.png") center center / contain no-repeat;
-      background-color: #111; /* fallback color */
+      height: 100vh;
+      margin: 0;
+      background: #111;
     }
     .image-container {
       position: relative;
@@ -27,7 +26,7 @@
       border-radius: 12px;
       box-shadow: 0 0 20px rgba(255,255,255,0.5);
       opacity: 0;
-      transition: opacity 1.5s ease-in-out;
+      transition: opacity 1.5s ease-in-out; /* smooth crossfade */
     }
     img.visible {
       opacity: 1;
@@ -36,8 +35,61 @@
 </head>
 <body>
   <div class="image-container">
-    <img id="img1" class="" src="" alt="Current Image 1">
-    <img id="img2" class="" src="" alt="Current Image 2">
+    <!-- Two layers for crossfade -->
+    <img id="img1" class="visible" 
+         src="https://raw.githubusercontent.com/gtpark0904/gtpark0904.github.io/main/default.png" 
+         alt="Image 1">
+    <img id="img2" 
+         src="" 
+         alt="Image 2">
   </div>
 
   <script>
+    const fallback = "https://raw.githubusercontent.com/gtpark0904/gtpark0904.github.io/main/default.png";
+    const current = "https://github.com/gtpark0904/gtpark0904.github.io/releases/download/current_image/current.png?raw=true";
+
+    const img1 = document.getElementById("img1");
+    const img2 = document.getElementById("img2");
+
+    let intervalId = null;
+    let showingImg1 = true; // track which image is active
+
+    function updateImage() {
+      const newImg = new Image();
+      newImg.src = current + "&t=" + new Date().getTime(); // cache-busting
+
+      newImg.onload = () => {
+        const nextImg = showingImg1 ? img2 : img1;
+        const prevImg = showingImg1 ? img1 : img2;
+
+        nextImg.src = newImg.src;
+
+        // start fade
+        nextImg.classList.add("visible");
+        prevImg.classList.remove("visible");
+
+        showingImg1 = !showingImg1;
+
+        // ✅ stop refreshing once found
+        if (intervalId) {
+          clearInterval(intervalId);
+          intervalId = null;
+          console.log("current.png found. Refresh stopped.");
+        }
+      };
+
+      newImg.onerror = () => {
+        // keep fallback visible
+        if (!img1.classList.contains("visible") && !img2.classList.contains("visible")) {
+          img1.src = fallback;
+          img1.classList.add("visible");
+        }
+      };
+    }
+
+    // keep checking every 10s until found
+    intervalId = setInterval(updateImage, 10000);
+    updateImage();
+  </script>
+</body>
+</html>
