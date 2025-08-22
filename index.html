@@ -21,17 +21,15 @@
   </style>
 </head>
 <body>
-  <img src="https://github.com/gtpark0904/gtpark0904.github.io/releases/download/current_image/current.png?raw=true" alt="My Image">
+  <!-- Added id="card" -->
+  <img id="card" src="https://github.com/gtpark0904/gtpark0904.github.io/releases/download/current_image/current.png?raw=true" alt="My Image">
+
   <script>
-    // Refresh card every 10 seconds
+    // Refresh image every 10 seconds
     setInterval(() => {
       const card = document.getElementById("card");
-      // cache-busting query parameter ensures browser fetches latest image
-      card.src = "https://github.com/gtpark0904/gtpark0904.github.io/releases/download/current_image/current.png?raw=true?t=" + new Date().getTime();
+      card.src = "https://github.com/gtpark0904/gtpark0904.github.io/releases/download/current_image/current.png?raw=true&time=" + new Date().getTime();
     }, 10000);
   </script>
 </body>
 </html>
-
-
-
