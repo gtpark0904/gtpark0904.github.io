@@ -17,23 +17,49 @@
       max-height: 90%;
       border-radius: 12px;
       box-shadow: 0 0 20px rgba(255,255,255,0.5);
+      transition: opacity 0.3s ease-in-out;
     }
   </style>
 </head>
 <body>
+  <!-- Start with default -->
   <img id="card"
-       src="https://github.com/gtpark0904/gtpark0904.github.io/releases/download/current_image/default.png"
-       alt="My Image"
-       onerror="this.onerror=null; this.src='https://github.com/gtpark0904/gtpark0904.github.io/releases/download/current_image/default.png';">
-  <!-- Added id="card" -->
-  <img id="card" src="https://github.com/gtpark0904/gtpark0904.github.io/releases/download/current_image/current.png" alt="My Image">
+       src="https://raw.githubusercontent.com/gtpark0904/gtpark0904.github.io/main/default.png"
+       alt="My Image">
 
   <script>
-    // Refresh image every 10 seconds
-    setInterval(() => {
+    const releaseUrl = "https://github.com/gtpark0904/gtpark0904.github.io/releases/download/current_image/current.png";
+    const defaultUrl = "https://raw.githubusercontent.com/gtpark0904/gtpark0904.github.io/main/default.png";
+
+    function refreshImage() {
       const card = document.getElementById("card");
-      card.src = "https://github.com/gtpark0904/gtpark0904.github.io/releases/download/current_image/current.png?time=" + new Date().getTime();
-    }, 10000);
+      const testImage = new Image();
+      const newUrl = releaseUrl + "?t=" + new Date().getTime();
+
+      testImage.onload = () => {
+        card.style.opacity = 0;
+        setTimeout(() => {
+          card.src = newUrl;
+          card.style.opacity = 1;
+        }, 200);
+      };
+
+      testImage.onerror = () => {
+        if (card.src !== defaultUrl) {
+          card.style.opacity = 0;
+          setTimeout(() => {
+            card.src = defaultUrl;
+            card.style.opacity = 1;
+          }, 200);
+        }
+      };
+
+      testImage.src = newUrl;
+    }
+
+    // Refresh every 10 seconds
+    setInterval(refreshImage, 10000);
+    refreshImage();
   </script>
 </body>
 </html>
