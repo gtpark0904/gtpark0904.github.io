@@ -10,13 +10,13 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      background-color: #111; /* fallback color */
+      background-color: #111;
     }
 
     .image-container {
       position: relative;
-      max-width: 90%;
-      max-height: 90%;
+      width: 80vw;       /* fixed relative size */
+      height: 80vh;
       background: url("https://raw.githubusercontent.com/gtpark0904/gtpark0904.github.io/main/default.png") center center / contain no-repeat;
       border-radius: 12px;
     }
@@ -26,7 +26,8 @@
       top: 0;
       left: 0;
       width: 100%;
-      height: auto;
+      height: 100%;
+      object-fit: contain;   /* scale current.png nicely */
       opacity: 0;
       transition: opacity 1.5s ease-in-out;
       border-radius: 12px;
@@ -51,13 +52,12 @@
 
     function updateImage() {
       const newImg = new Image();
-      newImg.src = currentUrl + "&t=" + new Date().getTime(); // cache-busting
+      newImg.src = currentUrl + "&t=" + new Date().getTime();
 
       newImg.onload = () => {
         currentImg.src = newImg.src;
         currentImg.classList.add("visible");
 
-        // stop interval once found
         if (intervalId) {
           clearInterval(intervalId);
           intervalId = null;
@@ -66,12 +66,10 @@
       };
 
       newImg.onerror = () => {
-        // image missing → do nothing; background default.png remains
-        currentImg.classList.remove("visible");
+        currentImg.classList.remove("visible"); // fallback visible via background
       };
     }
 
-    // refresh every 10s until current.png exists
     intervalId = setInterval(updateImage, 10000);
     updateImage();
   </script>
